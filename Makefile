@@ -1,22 +1,22 @@
 FLAGS= -Wall
 CC= gcc
-LIBS= -lpthread -lws -pthread -lcjson -ldb-utils
+LIBS= -lpthread -lws -lcjson -ldb-utils
 OBJECTS=objects
 BUILD=build
 SRC=src
 INCLUDE=include
 
+OBJECTS_FILES=$(OBJECTS)/main.o $(OBJECTS)/websocket.o $(OBJECTS)/actions.o
 
-all: $(OBJECTS)/main.o $(BUILD)/main 
+all: $(BUILD)/main
 
-
-$(BUILD)/main: $(OBJECTS)/main.o
+$(BUILD)/main: $(OBJECTS_FILES)
 	mkdir -p $(BUILD)
-	$(CC) $(FLAGS) -o $(BUILD)/main $(OBJECTS)/main.o  $(LIBS)
+	$(CC) $(OBJECTS_FILES) -o $(BUILD)/main $(LIBS)
 
-$(OBJECTS)/main.o: $(SRC)/*.c $(INCLUDE)/*.h
-	mkdir -p $(OBJECTS)
-	$(CC) $(FLAGS) -c $< -o $@ $(LIBS)
+
+$(OBJECTS)/%.o: $(SRC)/%.c $(INCLUDE)/*.h
+	$(CC) $(FLAGS) -c -fPIC -o $@ $<
 
 clean:
 	rm -f $(OBJECTS)/*

@@ -1,50 +1,20 @@
 #include "../include/main.h"
 
-void onopen(ws_cli_conn_t *client)
-{
-	((void)client);
-	printf("Connected!\n");
-}
-
-void onclose(ws_cli_conn_t *client)
-{
-	((void)client);
-	printf("Disconnected!\n");
-}
-
-void onmessage(ws_cli_conn_t *client,
-    const unsigned char *msg, uint64_t size, int type)
-{
-	cJSON *json = cJSON_Parse((const char*)msg);
-	cJSON *json_action = cJSON_GetObjectItemCaseSensitive(json, "action");
-	printf("Action: %s\n", json_action->valuestring);
-	
-	if (strcmp(json_action->valuestring, "getCocktails") == 0) {
-		printf("Get cocktails\n");
-		// envoyer liste cocktails
-	}
-	if (strcmp(json_action->valuestring, "getBottles") == 0) {
-		printf("Get bottles\n");
-		// envoyer liste bouteilles
-	}
-	if (strcmp(json_action->valuestring, "order") == 0) {
-		printf("order\n");
-		// traiter la commande
-	}
-
-    // ws_sendframe_txt(client, "{\"test\": \"commande\"}");
-}
-
 PGconn *conn;
+struct ws_events evs;
 
 int main(int argc, char **argv)
 {
-	struct ws_events evs;
+	// setup websocket server
 	evs.onopen    = &onopen;
 	evs.onclose   = &onclose;
 	evs.onmessage = &onmessage;
 	ws_socket(&evs, PORT, 1, 1000);
 
+	// setup database connection
+	conn = db_connect(db_host, db_database, db_user, db_password);
+
+	// start thread to send order status to clients
 	pthread_t thread_send_status;
 	pthread_create(&thread_send_status, NULL, send_status, NULL);
 	pthread_join(thread_send_status, NULL);
@@ -52,11 +22,10 @@ int main(int argc, char **argv)
 	return (0);
 }
 
-void *send_status() 
+void *send_status()
 {	
 	while (1) {
-		// check boite aux lettres
+		// check for messages in queue
 		sleep(1);
 	}
-	printf("Rien\n");
 }

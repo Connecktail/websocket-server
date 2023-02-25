@@ -7,11 +7,15 @@
 #include <cjson/cJSON.h>
 #include <ws.h>
 #include <db-utils/dbutils.h>
+#include "websocket.h"
+#include "actions.h"
 
-#define PORT 6543
+#define db_host "172.17.0.1"
+#define db_database "connecktail"
+#define db_user "admin"
+#define db_password "admin"
 
-void onopen(ws_cli_conn_t *client);
-void onclose(ws_cli_conn_t *client);
-void onmessage(ws_cli_conn_t *client, const unsigned char *msg, uint64_t size, int type);
-void onerror(ws_cli_conn_t *client, char *message, size_t length);
+#define PORT 6543 // port to listen to
+
 void *send_status();
+
