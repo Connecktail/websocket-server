@@ -24,14 +24,10 @@ void onmessage(ws_cli_conn_t *client, const unsigned char *msg, uint64_t size, i
 	cJSON *json_action = cJSON_GetObjectItemCaseSensitive(json, "action");
 	printf("Action: %s\n", json_action->valuestring);
 	
-	if (strcmp(json_action->valuestring, "getCocktails") == 0) {
-		printf("Get cocktails\n");
-		// send cocktails list
+	if (strcmp(json_action->valuestring, "get_cocktails") == 0) {
         sendCocktails(client);
 	}
-	if (strcmp(json_action->valuestring, "getBottles") == 0) {
-		printf("Get bottles\n");
-		// send bottles list
+	if (strcmp(json_action->valuestring, "get_bottles") == 0) {
         sendBottles(client);
 	}
 	if (strcmp(json_action->valuestring, "order") == 0) {
