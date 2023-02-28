@@ -5,12 +5,12 @@
 #include <pthread.h>
 #include <string.h>
 #include <cjson/cJSON.h>
-#include <ws.h>
+#include <wsserver/ws.h>
 #include <db-utils/dbutils.h>
 #include "websocket.h"
 #include "actions.h"
 
-#define db_host "172.17.0.1"
+#define db_host "localhost"
 #define db_database "connecktail"
 #define db_user "admin"
 #define db_password "admin"

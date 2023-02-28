@@ -1,6 +1,6 @@
 #ifndef WEBSOCKET_H
 #define WEBSOCKET_H
-#include <ws.h>
+#include "main.h"
 
 /**
  * @brief Callback when a client connects to the websocket
