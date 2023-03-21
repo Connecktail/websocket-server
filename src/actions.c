@@ -88,5 +88,34 @@ void sendBottles(ws_cli_conn_t *client){
 }
 
 void processOrder(ws_cli_conn_t *client, cJSON *json_order){
-    printf("nothing\n");
+    order_t *order = malloc(sizeof(order_t));
+    cocktail_t *cocktail = malloc(sizeof(cocktail_t));
+
+    int length;
+
+    cJSON *j_cocktail;
+    cJSON *j_cocktails = cJSON_GetObjectItemCaseSensitive(json_order, "cocktails");
+    cJSON *price = cJSON_GetObjectItemCaseSensitive(json_order, "total");
+
+    order->nb_cocktails = 0;
+    order->cocktails = NULL;
+    if (price->valuedouble > 0){
+        order->price = price->valuedouble;
+    }
+    cJSON_ArrayForEach(j_cocktail, j_cocktails) {
+        cJSON *cocktail_id = cJSON_GetObjectItemCaseSensitive(j_cocktail, "recipe");
+        cJSON *cocktail_number = cJSON_GetObjectItemCaseSensitive(j_cocktail, "number");
+        id_db_t id = malloc(sizeof(id_db_t));
+        *id = cocktail_id->valueint;
+        int number = cocktail_number->valueint;
+
+        cocktail = get_cocktail_by_id(conn, id);
+
+        for(int i = 0; i < number; i++) {
+            order->cocktails = realloc(order->cocktails, sizeof(cocktail_t *) * (order->nb_cocktails + 1));
+            order->cocktails[order->nb_cocktails++] = cocktail;
+        }
+    }
+
+    insert_order(conn, order);
 }
