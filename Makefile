@@ -1,12 +1,12 @@
 FLAGS= -Wall
 CC= gcc
-LIBS= -lpthread -lws -lcjson -ldb-utils
+LIBS= -lpthread -lws -lcjson -ldb-utils -lshm-utils
 OBJECTS=objects
 BUILD=build
 SRC=src
 INCLUDE=include
 
-OBJECTS_FILES=$(OBJECTS)/main.o $(OBJECTS)/websocket.o $(OBJECTS)/actions.o
+OBJECTS_FILES=$(OBJECTS)/main.o $(OBJECTS)/websocket.o $(OBJECTS)/actions.o $(OBJECTS)/clients.o
 
 all: $(BUILD)/main
 

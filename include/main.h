@@ -7,8 +7,11 @@
 #include <cjson/cJSON.h>
 #include <wsserver/ws.h>
 #include <db-utils/dbutils.h>
+#include <shm-utils/shmutils.h>
+#include <signal.h>
 #include "websocket.h"
 #include "actions.h"
+#include "clients.h"
 
 #define db_host "localhost"
 #define db_database "connecktail"
@@ -17,5 +20,5 @@
 
 #define PORT 6543 // port to listen to
 
-void *send_status();
+void *check_status_update();
 

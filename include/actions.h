@@ -3,16 +3,6 @@
 #include "main.h"
 
 /**
- * @brief Callback when a client connects to the websocket
-*/
-void clientConnected(ws_cli_conn_t *client);
-
-/**
- * @brief Callback when a client disconnects from the websocket
-*/
-void clientDisconnected(ws_cli_conn_t *client);
-
-/**
  * @brief Send the list of cocktails to the client
  * @param client A pointer to a ws_cli_conn_t object
 */
