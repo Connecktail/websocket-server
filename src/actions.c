@@ -2,6 +2,9 @@
 
 extern PGconn *conn;
 extern struct ws_events evs;
+extern client_t *clients;
+extern int nb_clients;
+extern int shmid;
 
 void sendCocktails(ws_cli_conn_t *client){
     cJSON *respObject = cJSON_CreateObject();
@@ -88,34 +91,43 @@ void sendBottles(ws_cli_conn_t *client){
 }
 
 void processOrder(ws_cli_conn_t *client, cJSON *json_order){
-    order_t *order = malloc(sizeof(order_t));
-    cocktail_t *cocktail = malloc(sizeof(cocktail_t));
+    if(nb_clients+1 <= MAX_CLIENTS) {
+        order_t *order = malloc(sizeof(order_t));
+        cocktail_t *cocktail = malloc(sizeof(cocktail_t));
 
-    int length;
+        cJSON *j_cocktail;
+        cJSON *j_cocktails = cJSON_GetObjectItemCaseSensitive(json_order, "cocktails");
+        cJSON *price = cJSON_GetObjectItemCaseSensitive(json_order, "total");
 
-    cJSON *j_cocktail;
-    cJSON *j_cocktails = cJSON_GetObjectItemCaseSensitive(json_order, "cocktails");
-    cJSON *price = cJSON_GetObjectItemCaseSensitive(json_order, "total");
-
-    order->nb_cocktails = 0;
-    order->cocktails = NULL;
-    if (price->valuedouble > 0){
-        order->price = price->valuedouble;
-    }
-    cJSON_ArrayForEach(j_cocktail, j_cocktails) {
-        cJSON *cocktail_id = cJSON_GetObjectItemCaseSensitive(j_cocktail, "recipe");
-        cJSON *cocktail_number = cJSON_GetObjectItemCaseSensitive(j_cocktail, "number");
-        id_db_t id = malloc(sizeof(id_db_t));
-        *id = cocktail_id->valueint;
-        int number = cocktail_number->valueint;
-
-        cocktail = get_cocktail_by_id(conn, id);
-
-        for(int i = 0; i < number; i++) {
-            order->cocktails = realloc(order->cocktails, sizeof(cocktail_t *) * (order->nb_cocktails + 1));
-            order->cocktails[order->nb_cocktails++] = cocktail;
+        order->nb_cocktails = 0;
+        order->cocktails = NULL;
+        if (price->valuedouble > 0){
+            order->price = price->valuedouble;
         }
-    }
+        cJSON_ArrayForEach(j_cocktail, j_cocktails) {
+            cJSON *cocktail_id = cJSON_GetObjectItemCaseSensitive(j_cocktail, "recipe");
+            cJSON *cocktail_number = cJSON_GetObjectItemCaseSensitive(j_cocktail, "number");
+            id_db_t id = malloc(sizeof(id_db_t));
+            *id = cocktail_id->valueint;
+            int number = cocktail_number->valueint;
 
-    insert_order(conn, order);
+            cocktail = get_cocktail_by_id(conn, id);
+
+            for(int i = 0; i < number; i++) {
+                order->cocktails = realloc(order->cocktails, sizeof(cocktail_t *) * (order->nb_cocktails + 1));
+                order->cocktails[order->nb_cocktails++] = cocktail;
+            }
+        }
+
+        insert_order(conn, order);
+
+        add_client(client, order);
+
+        shm_t *shm;
+        shm = get_shm();
+
+        kill(shm->device_handler_pid, SIGUSR2);
+    } else {
+        // nbr max clients
+    }
 }
