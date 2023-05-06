@@ -131,3 +131,15 @@ void processOrder(ws_cli_conn_t *client, cJSON *json_order){
         // nbr max clients
     }
 }
+
+void checkOrder(ws_cli_conn_t *client) {
+    char *cli;
+    cli = ws_getaddress(client);
+
+    for(int i = 0; i < nb_clients; i++) {
+        if(strcmp(cli, ws_getaddress(clients[i].client)) == 0) {
+            clients[i].client = client;
+            send_status_to_client(&clients[i]);
+        }
+    }
+}

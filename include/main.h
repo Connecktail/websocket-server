@@ -8,6 +8,8 @@
 #include <wsserver/ws.h>
 #include <db-utils/dbutils.h>
 #include <shm-utils/shmutils.h>
+#include <msq-utils/msqutils.h>
+#include <msq-utils/msqtypes.h>
 #include <signal.h>
 #include "websocket.h"
 #include "actions.h"

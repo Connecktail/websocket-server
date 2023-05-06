@@ -1,6 +1,6 @@
 FLAGS= -Wall
 CC= gcc
-LIBS= -lpthread -lws -lcjson -ldb-utils -lshm-utils
+LIBS= -lpthread -lws -lcjson -ldb-utils -lshm-utils -lmsq-utils
 OBJECTS=objects
 BUILD=build
 SRC=src
