@@ -20,8 +20,10 @@ void add_client(ws_cli_conn_t *client, order_t *order) {
 
 status_message_t *init_status(order_t *order) {
     status_message_t *status = (status_message_t *)malloc(sizeof(status_message_t));
+    status->cocktail = 0;
+    status->total_cocktail = order->nb_cocktails;
     status->step = 0;
-    status->total_step = order->nb_cocktails;
+    status->total_step = 0;
     status->bottle = 0;
     status->total_bottle = 0;
     strcpy(status->message, "Order waiting to be taken");
@@ -31,6 +33,8 @@ status_message_t *init_status(order_t *order) {
 void send_status_to_client(client_t *client) {
     cJSON *respObject = cJSON_CreateObject();
     cJSON *action = cJSON_CreateString("status");
+    cJSON *cocktail = cJSON_CreateNumber(client->status->cocktail);
+    cJSON *total_cocktail = cJSON_CreateNumber(client->status->total_cocktail);
     cJSON *step = cJSON_CreateNumber(client->status->step);
     cJSON *total_step = cJSON_CreateNumber(client->status->total_step);
     cJSON *bottle = cJSON_CreateNumber(client->status->bottle);
@@ -38,6 +42,8 @@ void send_status_to_client(client_t *client) {
     cJSON *message = cJSON_CreateString(client->status->message);
 
     cJSON_AddItemToObject(respObject, "action", action);
+    cJSON_AddItemToObject(respObject, "cocktail", cocktail);
+    cJSON_AddItemToObject(respObject, "total_cocktail", total_cocktail);
     cJSON_AddItemToObject(respObject, "step", step);
     cJSON_AddItemToObject(respObject, "total_step", total_step);
     cJSON_AddItemToObject(respObject, "bottle", bottle);

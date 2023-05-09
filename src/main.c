@@ -51,6 +51,8 @@ void *check_status_update() {
 
 		for(int i = 0; i < nb_clients; i++) {
 			if(*clients[i].order->id == msg.message.order_status.id_order) {
+				clients[i].status->cocktail = msg.message.order_status.cocktail;
+				clients[i].status->total_cocktail = msg.message.order_status.total_cocktail;
 				clients[i].status->step = msg.message.order_status.step;
 				clients[i].status->total_step = msg.message.order_status.total_step;
 				clients[i].status->bottle = msg.message.order_status.bottle;
