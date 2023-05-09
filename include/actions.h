@@ -21,4 +21,10 @@ void sendBottles(ws_cli_conn_t *client);
 */
 void processOrder(ws_cli_conn_t *client, cJSON *json_order);
 
+/**
+ * @brief Check if a client already has an order (and if he has, send its status to him)
+ * @param client A pointer to a ws_cli_conn_t object
+*/
+void checkOrder(ws_cli_conn_t *client);
+
 #endif

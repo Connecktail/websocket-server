@@ -30,8 +30,9 @@ void onmessage(ws_cli_conn_t *client, const unsigned char *msg, uint64_t size, i
 	}
 	if (strcmp(json_action->valuestring, "order") == 0) {
 	    cJSON *json_order = cJSON_GetObjectItemCaseSensitive(json, "order");
-		printf("order\n");
-		// process client order
         processOrder(client, json_order);
+	}
+	if (strcmp(json_action->valuestring, "check_order") == 0) {
+        checkOrder(client);
 	}
 }

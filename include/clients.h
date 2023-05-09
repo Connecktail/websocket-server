@@ -3,18 +3,9 @@
 #include "main.h"
 
 typedef struct {
-    int percentage;
-    int step;
-    int total_step;
-    int bottle;
-    int total_bottle;
-    char *message;
-} status_t;
-
-typedef struct {
     ws_cli_conn_t *client;
     order_t *order;
-    status_t *status;
+    status_message_t *status;
 } client_t;
 
 /**
@@ -28,7 +19,7 @@ void add_client(ws_cli_conn_t *client, order_t *order);
  * @param order A pointer to a order_t object
  * @return A pointer to a status_t object
 */
-status_t *init_status(order_t *order);
+status_message_t *init_status(order_t *order);
 
 /**
  * @brief Send the status of an order to the client
