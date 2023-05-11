@@ -105,17 +105,63 @@ void processOrder(ws_cli_conn_t *client, cJSON *json_order){
             order->price = price->valuedouble;
         }
         cJSON_ArrayForEach(j_cocktail, j_cocktails) {
-            cJSON *cocktail_id = cJSON_GetObjectItemCaseSensitive(j_cocktail, "recipe");
-            cJSON *cocktail_number = cJSON_GetObjectItemCaseSensitive(j_cocktail, "number");
-            id_db_t id = malloc(sizeof(id_db_t));
-            *id = cocktail_id->valueint;
-            int number = cocktail_number->valueint;
+            cJSON *cocktail_perso = cJSON_GetObjectItemCaseSensitive(j_cocktail, "perso");
+            if(cocktail_perso->valueint == 0) { // Cocktail non personnalisé
+                cJSON *cocktail_id = cJSON_GetObjectItemCaseSensitive(j_cocktail, "recipe");
+                cJSON *cocktail_number = cJSON_GetObjectItemCaseSensitive(j_cocktail, "number");
+                id_db_t id = malloc(sizeof(id_db_t));
+                *id = cocktail_id->valueint;
+                int number = cocktail_number->valueint;
 
-            cocktail = get_cocktail_by_id(conn, id);
+                cocktail = get_cocktail_by_id(conn, id);
 
-            for(int i = 0; i < number; i++) {
+                for(int i = 0; i < number; i++) {
+                    order->cocktails = realloc(order->cocktails, sizeof(cocktail_t *) * (order->nb_cocktails + 1));
+                    order->cocktails[order->nb_cocktails++] = cocktail;
+                }
+            } else if(cocktail_perso->valueint == 1){ // Cocktail personnalisé
+                cJSON *j_bottle;
+                cJSON *j_bottles = cJSON_GetObjectItemCaseSensitive(j_cocktail, "items");
+                cJSON *cocktail_price = cJSON_GetObjectItemCaseSensitive(j_cocktail, "price");
+
+                cocktail_t *new_cocktail = malloc(sizeof(cocktail_t));
+
+                new_cocktail->price = cocktail_price->valuedouble;
+                new_cocktail->personalized = true;
+                strcpy(new_cocktail->name, "Personalized Cocktail");
+                strcpy(new_cocktail->description, "Personalized Cocktail");
+                strcpy(new_cocktail->image_url, "https://image.jpg");
+
+                insert_cocktail(conn, new_cocktail);
+
+                cJSON_ArrayForEach(j_bottle, j_bottles) {
+                    cJSON *bottle_id = cJSON_GetObjectItemCaseSensitive(j_bottle, "id");
+                    cJSON *bottle_quantity = cJSON_GetObjectItemCaseSensitive(j_bottle, "quantity");
+                    id_db_t id = malloc(sizeof(id_db_t));
+                    *id = bottle_id->valueint;
+                    int quantity = bottle_quantity->valueint;
+
+                    int length;
+                    bottle_t **liste_bottles = get_bottles(conn, &length);
+
+                    step_t *step = malloc(sizeof(step_t));
+                    for(int i = 0; i < length; i++) {
+                        if(*liste_bottles[i]->id == *id) {
+                            step->bottle = liste_bottles[i];
+                        }
+                    }
+                    step->id_cocktail = (id_db_t)malloc(sizeof(id_db_t));
+                    *step->id_cocktail = *new_cocktail->id;
+                    step->quantity = quantity;
+                    sprintf(step->description, "Pour %d cl of %s", quantity, step->bottle->name);
+                    strcpy(step->message, "");
+
+                    insert_step(conn, step);
+                }
+                
                 order->cocktails = realloc(order->cocktails, sizeof(cocktail_t *) * (order->nb_cocktails + 1));
-                order->cocktails[order->nb_cocktails++] = cocktail;
+                new_cocktail->personalized = false;
+                order->cocktails[order->nb_cocktails++] = new_cocktail;
             }
         }
 
