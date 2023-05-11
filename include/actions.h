@@ -15,7 +15,7 @@ void sendCocktails(ws_cli_conn_t *client);
 void sendBottles(ws_cli_conn_t *client);
 
 /**
- * @brief Process the order from a clien
+ * @brief Process the order from a client
  * @param client A pointer to a ws_cli_conn_t object
  * @param json_order A pointer to a cJSON object that contains the information about the client's order
 */
