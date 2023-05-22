@@ -6,7 +6,7 @@ BUILD=build
 SRC=src
 INCLUDE=include
 
-OBJECTS_FILES=$(OBJECTS)/main.o $(OBJECTS)/websocket.o $(OBJECTS)/actions.o $(OBJECTS)/clients.o
+OBJECTS_FILES=$(OBJECTS)/main.o $(OBJECTS)/websocket.o $(OBJECTS)/actions.o $(OBJECTS)/clients.o $(OBJECTS)/status.o
 
 all: $(BUILD)/main
 
